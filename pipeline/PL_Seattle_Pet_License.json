@@ -138,7 +138,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DF_",
+						"referenceName": "DF_Fact",
 						"type": "DataFlowReference"
 					},
 					"compute": {

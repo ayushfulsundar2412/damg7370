@@ -1,5 +1,5 @@
 {
-	"name": "DF_",
+	"name": "DF_Fact",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
