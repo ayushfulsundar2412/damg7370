@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Snowflake1'"
 		},
+		"Snowflake_NYPD_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Snowflake_NYPD'"
+		},
 		"AzureBlobStorage1_sasUri": {
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorage1'"
@@ -34,6 +38,14 @@
 		"Snowflake1_properties_typeProperties_role": {
 			"type": "string",
 			"defaultValue": "TEMP_ROLE"
+		},
+		"Snowflake_NYPD_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "NYPD_DB"
+		},
+		"Snowflake_NYPD_properties_typeProperties_role": {
+			"type": "string",
+			"defaultValue": "NYPD_ROLE"
 		},
 		"containerUri": {
 			"type": "string",
@@ -65,6 +77,9 @@
 					"Snowflake1_password": {
 						"value": "[parameters('Snowflake1_password')]"
 					},
+					"Snowflake_NYPD_password": {
+						"value": "[parameters('Snowflake_NYPD_password')]"
+					},
 					"AzureBlobStorage1_sasUri": {
 						"value": "[parameters('AzureBlobStorage1_sasUri')]"
 					},
@@ -82,10 +97,36 @@
 					},
 					"Snowflake1_properties_typeProperties_role": {
 						"value": "[parameters('Snowflake1_properties_typeProperties_role')]"
+					},
+					"Snowflake_NYPD_properties_typeProperties_database": {
+						"value": "[parameters('Snowflake_NYPD_properties_typeProperties_database')]"
+					},
+					"Snowflake_NYPD_properties_typeProperties_role": {
+						"value": "[parameters('Snowflake_NYPD_properties_typeProperties_role')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "ayushdamg7370_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ayushdamg7370_ArmTemplate_0')]"
+			]
 		}
 	]
 }
