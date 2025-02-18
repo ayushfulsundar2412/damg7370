@@ -1,0 +1,77 @@
+{
+	"name": "PL_Seattle_Pet_License",
+	"properties": {
+		"activities": [
+			{
+				"name": "CleanPetLicData",
+				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:30:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Clean_Data_From_TSV",
+						"type": "DataFlowReference",
+						"parameters": {
+							"JOB_ID": {
+								"value": "'@{pipeline().RunId}'",
+								"type": "Expression"
+							}
+						},
+						"datasetParameters": {
+							"readTSVfile": {
+								"FileName": "Seattle_Pet_Licenses.tsv"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "LoadBreedDim",
+				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:30:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Load_Breed_Dim",
+						"type": "DataFlowReference",
+						"parameters": {
+							"DI_JOB_ID": {
+								"value": "'@{substring(pipeline().RunId,1,10)}'",
+								"type": "Expression"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": []
+	}
+}

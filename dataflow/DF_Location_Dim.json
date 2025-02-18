@@ -1,0 +1,39 @@
+{
+	"name": "DF_Location_Dim",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_GeoDataFile",
+						"type": "DatasetReference"
+					},
+					"name": "sourceGeoFile"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "surrogateKey"
+				},
+				{
+					"name": "derivedColumn"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     DI_JOB_ID as string ('10')",
+				"}",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourceGeoFile",
+				"sourceGeoFile keyGenerate(output(SK_ID as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"surrogateKey derive(DI_JOB_ID = $DI_JOB_ID,",
+				"          DI_LOAD_DT = currentTimestamp()) ~> derivedColumn"
+			]
+		}
+	}
+}
