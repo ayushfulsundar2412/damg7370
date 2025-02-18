@@ -12,7 +12,15 @@
 					"name": "sourceGeoFile"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_Edw_Location_Dim",
+						"type": "DatasetReference"
+					},
+					"name": "SinkLocationDim"
+				}
+			],
 			"transformations": [
 				{
 					"name": "surrogateKey"
@@ -25,14 +33,51 @@
 				"parameters{",
 				"     DI_JOB_ID as string ('10')",
 				"}",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          state_fips as short,",
+				"          state as string,",
+				"          state_abbr as string,",
+				"          zipcode as string,",
+				"          county as string,",
+				"          city as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> sourceGeoFile",
 				"sourceGeoFile keyGenerate(output(SK_ID as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKey",
 				"surrogateKey derive(DI_JOB_ID = $DI_JOB_ID,",
-				"          DI_LOAD_DT = currentTimestamp()) ~> derivedColumn"
+				"          DI_LOAD_DT = currentTimestamp()) ~> derivedColumn",
+				"derivedColumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LOCATION_SK as string,",
+				"          CITY as string,",
+				"          STATE as string,",
+				"          STATE_ABBR as string,",
+				"          ZIP_CODE as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DT as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          LOCATION_SK = SK_ID,",
+				"          CITY = city,",
+				"          STATE = state,",
+				"          STATE_ABBR = state_abbr,",
+				"          ZIP_CODE = zipcode,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DT",
+				"     )) ~> SinkLocationDim"
 			]
 		}
 	}
