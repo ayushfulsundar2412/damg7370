@@ -58,7 +58,7 @@
 				"          STATE_ABBR as string,",
 				"          ZIP_CODE as string,",
 				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DT as string",
+				"          DI_LOAD_DT as date",
 				"     ),",
 				"     deletable:false,",
 				"     insertable:true,",

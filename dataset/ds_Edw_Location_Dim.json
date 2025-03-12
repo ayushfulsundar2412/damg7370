@@ -41,5 +41,6 @@
 			"schema": "EDW",
 			"table": "LOCATION_DIM"
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }

@@ -39,5 +39,6 @@
 			"schema": "EDW",
 			"table": "BREED_DIM"
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }

@@ -1,5 +1,6 @@
 {
 	"name": "AzureDataLakeStorage1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"description": "adf to access my storage containers",
 		"annotations": [],
@@ -7,6 +8,5 @@
 		"typeProperties": {
 			"url": "https://ayushdamg7370.dfs.core.windows.net/"
 		}
-	},
-	"type": "Microsoft.DataFactory/factories/linkedservices"
+	}
 }

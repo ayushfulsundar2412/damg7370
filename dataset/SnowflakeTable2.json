@@ -111,5 +111,6 @@
 			"schema": "NYPD_SCHEMA",
 			"table": "NYPD_ARRESTDATA_STAGE"
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }
