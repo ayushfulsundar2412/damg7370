@@ -1,0 +1,93 @@
+{
+	"name": "DF_FCT_Invoice",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText8",
+						"type": "DatasetReference"
+					},
+					"name": "sourceSalesData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTable8",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "surrogateKey1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     Id as string ('11'),",
+				"     Date as date (currentDate())",
+				"}",
+				"source(output(",
+				"          invoiceId as integer,",
+				"          customerid as short,",
+				"          invoiceDate as date,",
+				"          ShipTo as string,",
+				"          ShipTo_City as string,",
+				"          ShipTo_Country as string,",
+				"          SalespersonPersonID as short,",
+				"          SalespersonName as string,",
+				"          total_product_cnt as short,",
+				"          Total as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourceSalesData",
+				"surrogateKey1 derive(customer_sk = toLong(null()),",
+				"          Pid = $Id,",
+				"          Date = $Date) ~> derivedColumn1",
+				"sourceSalesData keyGenerate(output(Invoice_Sk as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          INVOICE_SK as decimal(38,0),",
+				"          INVOICE_ID as decimal(38,0),",
+				"          CUSTOMER_ID as decimal(38,0),",
+				"          CUSTOMER_SK as decimal(38,0),",
+				"          INVOICE_DT as date,",
+				"          TOTAL_PRODUCT_CNT as decimal(38,0),",
+				"          TOTAL_PRODUCT_COST as double,",
+				"          DI_CREATEDDT as timestamp,",
+				"          PID as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          INVOICE_SK = Invoice_Sk,",
+				"          INVOICE_ID = invoiceId,",
+				"          CUSTOMER_ID = customerid,",
+				"          CUSTOMER_SK = customer_sk,",
+				"          INVOICE_DT = invoiceDate,",
+				"          TOTAL_PRODUCT_CNT = total_product_cnt,",
+				"          TOTAL_PRODUCT_COST = Total,",
+				"          DI_CREATEDDT = Date,",
+				"          PID = Pid",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
