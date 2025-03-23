@@ -5,14 +5,77 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "DelimitedText9",
+						"type": "DatasetReference"
+					},
 					"name": "source1"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTable6",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1"
+				"parameters{",
+				"     id as string ('12'),",
+				"     Date as date (currentDate())",
+				"}",
+				"source(output(",
+				"          customerid as short,",
+				"          CustomerName as string,",
+				"          billTo as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 keyGenerate(output(customer_sk as long),",
+				"     startAt: 69153L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 derive(pid = $id,",
+				"          Date = $Date) ~> derivedColumn1",
+				"derivedColumn1 alterRow(upsertIf(!isNull(customerid))) ~> alterRow1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CUSTOMER_SK as decimal(38,0),",
+				"          CUSTOMER_ID as decimal(38,0),",
+				"          CUSTOMER_NAME as string,",
+				"          BILLTO as string,",
+				"          DI_CREATEDDT as timestamp,",
+				"          PID as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:true,",
+				"     upsertable:true,",
+				"     keys:['CUSTOMER_ID'],",
+				"     format: 'table',",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          CUSTOMER_SK = customer_sk,",
+				"          CUSTOMER_ID = customerid,",
+				"          CUSTOMER_NAME = CustomerName,",
+				"          BILLTO = billTo,",
+				"          DI_CREATEDDT = Date,",
+				"          PID = pid",
+				"     )) ~> sink1"
 			]
 		}
 	}
